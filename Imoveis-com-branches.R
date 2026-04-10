@@ -9,3 +9,6 @@ hist(dados$metragem,
      col="pink")
 
 #Medidas 
+media_imposto <- mean(dados$imposto_anual, na.rm = TRUE)
+mediana_imposto <- median(dados$imposto_anual, na.rm = TRUE)
+sd_imposto <- sd(dados$imposto_anual, na.rm = TRUE)

@@ -1,2 +1,1 @@
-# Imoveis
-Análise estatística de dados sobre imóveis
+# Projeto de extensão da disciplina de Prática Estatística 1

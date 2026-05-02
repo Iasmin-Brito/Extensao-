@@ -250,152 +250,6 @@ dados_sinasc_2$F_PIG = factor(dados_sinasc_2$F_PIG, levels = c("PIG","AIG","GIG"
 # 97. APG5_DP (desvio-padrão dos Apgar5 dos recém-nascidos)   98. TRAC (total de recém-nascidos com anomalia congênita - IDANOMAL)
 # 99. TRSAC (total de recém-nascidos sem anomalia congênita)
 
-# 1 a 6: IDENTIFICAÇÃO E TOTAIS DE NASCIMENTO
-consolidado_PE <- data.frame(
-  ANO = 2015,                                     
-  NIVEL = "UF",                                   
-  CODMUNRES = 26,                                 
-  TN = nrow(dados_sinasc_2),                      
-  TNRC = sum(complete.cases(dados_sinasc_2)),
-  TNRCR = sum(complete.cases(dados_sinasc_2))     
-)
-
-# 7 a 15: Totais por faixa etária
-consolidado_PE$TGI_15    <- sum(dados_sinasc_2$IDADEMAE < 15, na.rm = TRUE)
-consolidado_PE$TGI_15_19 <- sum(dados_sinasc_2$IDADEMAE >= 15 & dados_sinasc_2$IDADEMAE <= 19, na.rm = TRUE)
-consolidado_PE$TGI_20_24 <- sum(dados_sinasc_2$IDADEMAE >= 20 & dados_sinasc_2$IDADEMAE <= 24, na.rm = TRUE)
-consolidado_PE$TGI_25_29 <- sum(dados_sinasc_2$IDADEMAE >= 25 & dados_sinasc_2$IDADEMAE <= 29, na.rm = TRUE)
-consolidado_PE$TGI_30_34 <- sum(dados_sinasc_2$IDADEMAE >= 30 & dados_sinasc_2$IDADEMAE <= 34, na.rm = TRUE)
-consolidado_PE$TGI_35_39 <- sum(dados_sinasc_2$IDADEMAE >= 35 & dados_sinasc_2$IDADEMAE <= 39, na.rm = TRUE)
-consolidado_PE$TGI_40_44 <- sum(dados_sinasc_2$IDADEMAE >= 40 & dados_sinasc_2$IDADEMAE <= 44, na.rm = TRUE)
-consolidado_PE$TGI_45_49 <- sum(dados_sinasc_2$IDADEMAE >= 45 & dados_sinasc_2$IDADEMAE <= 49, na.rm = TRUE)
-consolidado_PE$TGI_50    <- sum(dados_sinasc_2$IDADEMAE >= 50, na.rm = TRUE)
-
-# 16 a 21: Idade Fértil e Estatísticas
-consolidado_PE$TGIF   <- sum(dados_sinasc_2$IDADEMAE >= 15 & dados_sinasc_2$IDADEMAE <= 49, na.rm = TRUE)
-consolidado_PE$IM_P25 <- quantile(dados_sinasc_2$IDADEMAE, 0.25, na.rm = TRUE)
-consolidado_PE$IM_P50 <- median(dados_sinasc_2$IDADEMAE, na.rm = TRUE)
-consolidado_PE$IM_P75 <- quantile(dados_sinasc_2$IDADEMAE, 0.75, na.rm = TRUE)
-consolidado_PE$IM_MD  <- mean(dados_sinasc_2$IDADEMAE, na.rm = TRUE)
-consolidado_PE$IM_DP  <- sd(dados_sinasc_2$IDADEMAE, na.rm = TRUE)
-
-# 22 a 27: Escolaridade Materna
-consolidado_PE$EM_S   <- length(which(dados_sinasc_2$ESCMAE2010 == 0))
-consolidado_PE$EM_FI  <- length(which(dados_sinasc_2$ESCMAE2010 == 1))
-consolidado_PE$EM_FII <- length(which(dados_sinasc_2$ESCMAE2010 == 2))
-consolidado_PE$EM_M   <- length(which(dados_sinasc_2$ESCMAE2010 == 3))
-consolidado_PE$EM_SI  <- length(which(dados_sinasc_2$ESCMAE2010 == 4))
-consolidado_PE$EM_SC  <- length(which(dados_sinasc_2$ESCMAE2010 == 5))
-
-# 28 a 32: Raça/Cor da Mãe (TGRC)
-consolidado_PE$TGRC_B  <- length(which(dados_sinasc_2$RACACORMAE == 1))
-consolidado_PE$TGRC_PT <- length(which(dados_sinasc_2$RACACORMAE == 2))
-consolidado_PE$TGRC_A  <- length(which(dados_sinasc_2$RACACORMAE == 3))
-consolidado_PE$TGRC_PD <- length(which(dados_sinasc_2$RACACORMAE == 4))
-consolidado_PE$TGRC_I  <- length(which(dados_sinasc_2$RACACORMAE == 5))
-
-# 33 a 34: Estado Civil
-consolidado_PE$TGSC <- length(which(dados_sinasc_2$ESTCIV == "Sem companheiro"))
-consolidado_PE$TGCC <- length(which(dados_sinasc_2$ESTCIV == "Com companheiro"))
-
-# 35 a 36: Paridade
-consolidado_PE$TGPRI  <- length(which(dados_sinasc_2$QTDFILVIVO == 0 & dados_sinasc_2$QTDFILMORT == 0))
-consolidado_PE$TGNPRI <- length(which(dados_sinasc_2$QTDFILVIVO > 0 | dados_sinasc_2$QTDFILMORT > 0))
-
-# 37 e 38: Tipo de Gravidez
-consolidado_PE$TGU <- length(which(dados_sinasc_2$GRAVIDEZ == "Única"))
-consolidado_PE$TGG <- length(which(dados_sinasc_2$GRAVIDEZ %in% c("Dupla", "Tripla ou mais")))
-
-# 39 a 44: Duração da Gestação em semanas (TGD)
-consolidado_PE$TGD_22    <- length(which(dados_sinasc_2$SEMAGESTAC < 22))
-consolidado_PE$TGD_22_27 <- length(which(dados_sinasc_2$SEMAGESTAC >= 22 & dados_sinasc_2$SEMAGESTAC <= 27))
-consolidado_PE$TGD_28_31 <- length(which(dados_sinasc_2$SEMAGESTAC >= 28 & dados_sinasc_2$SEMAGESTAC <= 31))
-consolidado_PE$TGD_32_36 <- length(which(dados_sinasc_2$SEMAGESTAC >= 32 & dados_sinasc_2$SEMAGESTAC <= 36))
-consolidado_PE$TGD_37_41 <- length(which(dados_sinasc_2$SEMAGESTAC >= 37 & dados_sinasc_2$SEMAGESTAC <= 41))
-consolidado_PE$TGD_42    <- length(which(dados_sinasc_2$SEMAGESTAC >= 42))
-
-# 45 a 47: Agrupamentos de Duração
-consolidado_PE$TGD_PRT <- length(which(dados_sinasc_2$SEMAGESTAC < 37))
-consolidado_PE$TGD_AT  <- length(which(dados_sinasc_2$SEMAGESTAC >= 37 & dados_sinasc_2$SEMAGESTAC <= 41))
-consolidado_PE$TGD_PST <- length(which(dados_sinasc_2$SEMAGESTAC >= 42))
-
-# 48 a 52: Medidas da Duração da Gestação (DG)
-consolidado_PE$DG_P25 <- quantile(dados_sinasc_2$SEMAGESTAC, 0.25, na.rm = TRUE)
-consolidado_PE$DG_P50 <- median(dados_sinasc_2$SEMAGESTAC, na.rm = TRUE)
-consolidado_PE$DG_P75 <- quantile(dados_sinasc_2$SEMAGESTAC, 0.75, na.rm = TRUE)
-consolidado_PE$DG_MD  <- mean(dados_sinasc_2$SEMAGESTAC, na.rm = TRUE)
-consolidado_PE$DG_DP  <- sd(dados_sinasc_2$SEMAGESTAC, na.rm = TRUE)
-
-# 53 a 57: Consultas Pré-natal (TKC)
-consolidado_PE$TKC_NR  <- length(which(dados_sinasc_2$CONSPRENAT == 0))
-consolidado_PE$TKC_ID  <- length(which(dados_sinasc_2$CONSPRENAT >= 1 & dados_sinasc_2$CONSPRENAT <= 3))
-consolidado_PE$TKC_IT  <- length(which(dados_sinasc_2$CONSPRENAT >= 4 & dados_sinasc_2$CONSPRENAT <= 6))
-consolidado_PE$TKC_AD  <- length(which(dados_sinasc_2$CONSPRENAT >= 7))
-consolidado_PE$TKC_MAD <- 0 
-
-# 58 e 59: Peregrinação
-consolidado_PE$TGPRG_S <- 0
-consolidado_PE$TGPRG_N <- 0
-
-# 60 e 61: Tipo de Parto
-consolidado_PE$TPV <- length(which(dados_sinasc_2$PARTO == "Vaginal"))
-consolidado_PE$TPC <- length(which(dados_sinasc_2$PARTO == "Cesáreo"))
-
-# 62 a 64: Apresentação do Feto (TPAPRESENT)
-consolidado_PE$TRAP_C <- length(which(dados_sinasc_2$TPAPRESENT == 1)) # Cefálica
-consolidado_PE$TRAP_P <- length(which(dados_sinasc_2$TPAPRESENT == 2)) # Pélvica
-consolidado_PE$TRAP_T <- length(which(dados_sinasc_2$TPAPRESENT == 3)) # Transversa
-
-# 65 a 74: Grupos de Robson (TGROB)
-for(i in 1:10) {
-  nome_coluna <- paste0("TGROB_", i)
-  consolidado_PE[[nome_coluna]] <- 0
-}
-
-# 75 a 79: Local de Nascimento (TNLOC)
-consolidado_PE$TNLOC_H  <- length(which(dados_sinasc_2$LOCNASC == 1)) # Hospital
-consolidado_PE$TNLOC_ES <- length(which(dados_sinasc_2$LOCNASC == 2)) # Outro estab saúde
-consolidado_PE$TNLOC_D  <- length(which(dados_sinasc_2$LOCNASC == 3)) # Domicílio
-consolidado_PE$TNLOC_O  <- length(which(dados_sinasc_2$LOCNASC == 4)) # Outros
-consolidado_PE$TNLOC_AI <- length(which(dados_sinasc_2$LOCNASC == 5)) # Aldeia indígena
-
-# 80 a 81: Sexo (TRS)
-consolidado_PE$TRS_M <- length(which(dados_sinasc_2$SEXO == "Masculino"))
-consolidado_PE$TRS_F <- length(which(dados_sinasc_2$SEXO == "Feminino"))
-
-# 82 a 86: Raça/Cor do Recém-Nascido (TRRC)
-consolidado_PE$TRRC_B  <- length(which(dados_sinasc_2$RACACOR == "Branca"))
-consolidado_PE$TRRC_PT <- length(which(dados_sinasc_2$RACACOR == "Preta"))
-consolidado_PE$TRRC_A  <- length(which(dados_sinasc_2$RACACOR == "Amarela"))
-consolidado_PE$TRRC_PD <- length(which(dados_sinasc_2$RACACOR == "Parda"))
-consolidado_PE$TRRC_I  <- length(which(dados_sinasc_2$RACACOR == "Indígena"))
-
-# 87 a 89: Categorias de Peso (TRP)
-consolidado_PE$TRP_BP <- length(which(dados_sinasc_2$PESO < 2500))
-consolidado_PE$TRP_N  <- length(which(dados_sinasc_2$PESO >= 2500 & dados_sinasc_2$PESO < 4000))
-consolidado_PE$TRP_M  <- length(which(dados_sinasc_2$PESO >= 4000))
-
-# 90 a 94: Estatísticas de Peso (PESO)
-consolidado_PE$PESO_P25 <- quantile(dados_sinasc_2$PESO, 0.25, na.rm = TRUE)
-consolidado_PE$PESO_P50 <- median(dados_sinasc_2$PESO, na.rm = TRUE)
-consolidado_PE$PESO_P75 <- quantile(dados_sinasc_2$PESO, 0.75, na.rm = TRUE)
-consolidado_PE$PESO_MD  <- mean(dados_sinasc_2$PESO, na.rm = TRUE)
-consolidado_PE$PESO_DP  <- sd(dados_sinasc_2$PESO, na.rm = TRUE)
-
-# 95 a 97: Classificação Peso/Idade (TRPIG)
-consolidado_PE$TRPIG_P <- length(which(dados_sinasc_2$F_PIG == "PIG"))
-consolidado_PE$TRPIG_A <- length(which(dados_sinasc_2$F_PIG == "AIG"))
-consolidado_PE$TRPIG_G <- length(which(dados_sinasc_2$F_PIG == "GIG"))
-
-# 98 a 101: Apgar no 5º Minuto (TRAPG5)
-consolidado_PE$TRAPG5_B <- length(which(dados_sinasc_2$APGAR5 < 7))
-consolidado_PE$TRAPG5_N <- length(which(dados_sinasc_2$APGAR5 >= 7))
-consolidado_PE$APG5_MD  <- mean(dados_sinasc_2$APGAR5, na.rm = TRUE)
-consolidado_PE$APG5_DP  <- sd(dados_sinasc_2$APGAR5, na.rm = TRUE)
-
-# 102 a 103: Anomalia Congênita (TRAC)
-consolidado_PE$TRAC  <- length(which(dados_sinasc_2$IDANOMAL == "Sim"))
-consolidado_PE$TRSAC <- length(which(dados_sinasc_2$IDANOMAL == "Não"))
 
 # TAREFA 9 E 10 REFORMULADA PARA MUNICIPIOS DO ESTADO 
 
@@ -459,28 +313,176 @@ names(dp_idade)[2] <- "IM_DP"
 # Verificando se media_idade existe antes de rodar esta linha
 temp <- merge(media_idade, dp_idade, by = "CODMUNRES")
 
-# Juntando as médias e desvios ao seu consolidado pelo código do município
-consolidado_PE <- merge(consolidado_PE, media_idade, by = "CODMUNRES", all.x = TRUE)
-consolidado_PE <- merge(consolidado_PE, dp_idade, by = "CODMUNRES", all.x = TRUE)
+# Escolaridade da Mãe (EM_S, EM_FI, EM_FII, EM_M, EM_SI, EM_SC)
+tab_esc = table(dados_sinasc_2$CODMUNRES, factor(dados_sinasc_2$ESCMAE2010, levels = 1:5))
+df_esc = as.data.frame.matrix(tab_esc)
+names(df_esc) = c("EM_S", "EM_FI", "EM_FII", "EM_M", "EM_SI")
+df_esc$CODMUNRES = rownames(df_esc)
+base = merge(base, df_esc, by = "CODMUNRES", all.x = TRUE)
 
-# Exemplos de percentis
-# Idade da mãe
-p_idade = aggregate( IDADEMAE ~ CODMUNRES, dados_sinasc_2, function(x) quantile(x, probs =
-                                                                                  c(0.25,0.5,0.75), na.rm = TRUE))
-p_idade = do.call(data.frame, p_idade)
-names(p_idade) = c("CODMUNRES","IM_P25","IM_P50", "IM_P75")
-p_idade[, c("IM_P25","IM_P50","IM_P75")] = round(p_idade[, c("IM_P25","IM_P50","IM_P75")], 2)
-base = merge(base, p_idade, by="CODMUNRES", all.x=TRUE)
+tab = table(dados_sinasc_2$CODMUNRES, factor(dados_sinasc_2$RACACOR, levels = c(1, 2, 4, 3, 5)))
+df = as.data.frame.matrix(tab)
+names(df) = c("TGRC_B", "TGRC_PT", "TGRC_PD", "TGRC_A", "TGRC_I")
+df$CODMUNRES = rownames(df)
+base = merge(base, df, by = "CODMUNRES", all.x = TRUE)
 
-# Criando a lista das colunas que devem ser zeradas (as de contagem)
-cols_contagem = setdiff(names(consolidado_PE), c("CODMUNRES", "IM_MD", "IM_DP", "IM_P25", "IM_P50", "IM_P75"))
-# Aplicando o 0 apenas onde for NA dentro das colunas de contagem
-consolidado_PE[cols_contagem][is.na(consolidado_PE[cols_contagem])] = 0
+# Estado Civil: Solteiras (Código 1)
+# Criamos a contagem para a sigla TGSC
+base$TGSC <- as.vector(table(factor(dados_sinasc_2$CODMUNRES[dados_sinasc_2$ESTCIVMAE == 1], levels = base$CODMUNRES)))
 
+# Estado Civil: Casadas ou União Consensual (Códigos 2 e 5)
+# Criamos a contagem para a sigla TGCC
+base$TGCC <- as.vector(table(factor(dados_sinasc_2$CODMUNRES[dados_sinasc_2$ESTCIVMAE %in% c(2, 5)], levels = base$CODMUNRES)))
 
-# Removendo as colunas que usei para para organizar os dados
-consolidado_PE$IM_MD.x <- NULL
-consolidado_PE$IM_DP.x <- NULL
+# Gestações Únicas (TGU)
+base$TGU <- as.vector(table(factor(dados_sinasc_2$CODMUNRES[dados_sinasc_2$GRAVIDEZ == 1], levels = base$CODMUNRES)))
+
+# Gestações Múltiplas (TGG)
+base$TGG <- as.vector(table(factor(dados_sinasc_2$CODMUNRES[dados_sinasc_2$GRAVIDEZ > 1], levels = base$CODMUNRES)))
+
+#Duração ga gestação
+tab = table(dados_sinasc_2$CODMUNRES, factor(dados_sinasc_2$GESTACAO, levels = 1:6))
+df = as.data.frame.matrix(tab)
+names(df) = c("TGD_22", "TGD_22_27", "TGD_28_31", "TGD_32_36", "TGD_37_41", "TGD_42")
+df$CODMUNRES = rownames(df)
+
+# Garantir que a duração seja numérica
+dados_sinasc_2$SEMAGESTAC <- as.numeric(as.character(dados_sinasc_2$SEMAGESTAC))
+
+# Contagens de Gestações (Pré-termo, A termo, Pós-termo)
+base$TGD_PRT <- as.vector(table(factor(dados_sinasc_2$CODMUNRES[dados_sinasc_2$SEMAGESTAC < 37], levels = base$CODMUNRES)))
+base$TGD_AT  <- as.vector(table(factor(dados_sinasc_2$CODMUNRES[dados_sinasc_2$SEMAGESTAC >= 37 & dados_sinasc_2$SEMAGESTAC <= 41], levels = base$CODMUNRES)))
+base$TGD_PST <- as.vector(table(factor(dados_sinasc_2$CODMUNRES[dados_sinasc_2$SEMAGESTAC >= 42], levels = base$CODMUNRES)))
+
+# Estatísticas de Duração (Percentis, Média e Desvio)
+stats_gest <- aggregate(SEMAGESTAC ~ CODMUNRES, data = dados_sinasc_2, function(x) {
+  c(P25 = quantile(x, 0.25, na.rm = TRUE), 
+    P50 = median(x, na.rm = TRUE), 
+    P75 = quantile(x, 0.75, na.rm = TRUE),
+    MD = mean(x, na.rm = TRUE),
+    DP = sd(x, na.rm = TRUE))
+})
+stats_gest <- do.call(data.frame, stats_gest)
+names(stats_gest) <- c("CODMUNRES", "DG_P25", "DG_P50", "DG_P75", "DG_MD", "DG_DP")
+base <- merge(base, stats_gest, by = "CODMUNRES", all.x = TRUE)
+
+#Categorias de Kotelchuck
+# 1: Não realizado | 2: Inadequado | 3: Intermediário | 4: Adequado | 5: Mais que adequado (se houver)
+tab_kc <- table(dados_sinasc_2$CODMUNRES, factor(dados_sinasc_2$KOTELCHUCK, levels = 1:5))
+df_kc <- as.data.frame.matrix(tab_kc)
+names(df_kc) <- c("TKC_NR", "TKC_ID", "TKC_IT", "TKC_AD", "TKC_MAD")
+df_kc$CODMUNRES <- rownames(df_kc)
+base <- merge(base, df_kc, by = "CODMUNRES", all.x = TRUE)
+
+# Perigrinação
+dados_sinasc_2$PEREGRINA <- ifelse(dados_sinasc_2$CODMUNNASC != dados_sinasc_2$CODMUNRES, "S", "N")
+
+# Total de gestantes que peregrinaram (TGPRG_S)
+base$TGPRG_S <- as.vector(table(factor(dados_sinasc_2$CODMUNRES[dados_sinasc_2$PEREGRINA == "S"], levels = base$CODMUNRES)))
+
+#Total de gestantes que não peregrinaram (TGPRG_N)
+base$TGPRG_N <- as.vector(table(factor(dados_sinasc_2$CODMUNRES[dados_sinasc_2$PEREGRINA == "N"], levels = base$CODMUNRES)))
+
+#Total de partos vaginais (TPV)
+base$TPV <- as.vector(table(factor(dados_sinasc_2$CODMUNRES[dados_sinasc_2$PARTO == 1], levels = base$CODMUNRES)))
+
+# Total de partos cesáreos (TPC)
+base$TPC <- as.vector(table(factor(dados_sinasc_2$CODMUNRES[dados_sinasc_2$PARTO == 2], levels = base$CODMUNRES)))
+
+# Apresentação (Cefálica, Pélvica, Transversa)
+tab = table(dados_sinasc_2$CODMUNRES, factor(dados_sinasc_2$TPAPRESENT, levels = 1:3))
+df = as.data.frame.matrix(tab)
+names(df) = c("TRAP_C", "TRAP_P", "TRAP_T")
+df$CODMUNRES = rownames(df)
+base = merge(base, df, by = "CODMUNRES", all.x = TRUE)
+
+# Grupos de Robson (1 a 10)
+tab = table(dados_sinasc_2$CODMUNRES, factor(dados_sinasc_2$TPROBSON, levels = 1:10))
+df = as.data.frame.matrix(tab)
+names(df) = paste0("TGROB_", 1:10)
+df$CODMUNRES = rownames(df)
+base = merge(base, df, by = "CODMUNRES", all.x = TRUE)
+base = merge(base, df, by = "CODMUNRES", all.x = TRUE)
+
+# Local (Hospital, Outros Estab., Domicílio, Outros, Aldeia)
+tab = table(dados_sinasc_2$CODMUNRES, factor(dados_sinasc_2$LOCNASC, levels = 1:5))
+df = as.data.frame.matrix(tab)
+names(df) = c("TNLOC_H", "TNLOC_ES", "TNLOC_D", "TNLOC_O", "TNLOC_AI")
+df$CODMUNRES = rownames(df)
+base = merge(base, df, by = "CODMUNRES", all.x = TRUE)
+base = merge(base, df, by = "CODMUNRES", all.x = TRUE)
+
+# Masculino (TRS_M)
+base$TRS_M <- as.vector(table(factor(dados_sinasc_2$CODMUNRES[dados_sinasc_2$SEXO %in% c(1, "M", "Masculino")], levels = base$CODMUNRES)))
+
+# Feminino (TRS_F)
+base$TRS_F <- as.vector(table(factor(dados_sinasc_2$CODMUNRES[dados_sinasc_2$SEXO %in% c(2, "F", "Feminino")], levels = base$CODMUNRES)))
+
+# Raça/Cor
+base$TRRC_B  <- as.vector(table(factor(dados_sinasc_2$CODMUNRES[dados_sinasc_2$RACACOR == 1], levels = base$CODMUNRES)))
+base$TRRC_PT <- as.vector(table(factor(dados_sinasc_2$CODMUNRES[dados_sinasc_2$RACACOR == 2], levels = base$CODMUNRES)))
+base$TRRC_A  <- as.vector(table(factor(dados_sinasc_2$CODMUNRES[dados_sinasc_2$RACACOR == 3], levels = base$CODMUNRES)))
+base$TRRC_PD <- as.vector(table(factor(dados_sinasc_2$CODMUNRES[dados_sinasc_2$RACACOR == 4], levels = base$CODMUNRES)))
+base$TRRC_I  <- as.vector(table(factor(dados_sinasc_2$CODMUNRES[dados_sinasc_2$RACACOR == 5], levels = base$CODMUNRES)))
+
+# Garantir que o peso é numérico
+dados_sinasc_2$PESO <- as.numeric(as.character(dados_sinasc_2$PESO))
+
+# Baixo Peso (TRP_BP: < 2500g)
+base$TRP_BP <- as.vector(table(factor(dados_sinasc_2$CODMUNRES[dados_sinasc_2$PESO < 2500], levels = base$CODMUNRES)))
+
+# Peso Normal (TRP_N: 2500g a 3999g)
+base$TRP_N  <- as.vector(table(factor(dados_sinasc_2$CODMUNRES[dados_sinasc_2$PESO >= 2500 & dados_sinasc_2$PESO < 4000], levels = base$CODMUNRES)))
+
+# Macrossomia (TRP_M: >= 4000g)
+base$TRP_M  <- as.vector(table(factor(dados_sinasc_2$CODMUNRES[dados_sinasc_2$PESO >= 4000], levels = base$CODMUNRES)))
+
+# Calculando Percentis, Média e Desvio Padrão do Peso
+stats_peso <- aggregate(as.numeric(as.character(PESO)) ~ CODMUNRES, data = dados_sinasc_2, function(x) {
+  c(P25 = quantile(x, 0.25, na.rm = TRUE), 
+    P50 = median(x, na.rm = TRUE), 
+    P75 = quantile(x, 0.75, na.rm = TRUE),
+    MD = mean(x, na.rm = TRUE),
+    DP = sd(x, na.rm = TRUE))
+})
+stats_peso <- do.call(data.frame, stats_peso)
+names(stats_peso) <- c("CODMUNRES", "PESO_P25", "PESO_P50", "PESO_P75", "PESO_MD", "PESO_DP")
+base <- merge(base, stats_peso, by = "CODMUNRES", all.x = TRUE)
+
+# Filtrando apenas gestações únicas para as colunas TRPIG
+gest_unicas <- dados_sinasc_2[dados_sinasc_2$GRAVIDEZ == 1, ]
+
+base$TRPIG_P <- as.vector(table(factor(gest_unicas$CODMUNRES[gest_unicas$F_PIG == "PIG"], levels = base$CODMUNRES)))
+base$TRPIG_A <- as.vector(table(factor(gest_unicas$CODMUNRES[gest_unicas$F_PIG == "AIG"], levels = base$CODMUNRES)))
+base$TRPIG_G <- as.vector(table(factor(gest_unicas$CODMUNRES[gest_unicas$F_PIG == "GIG"], levels = base$CODMUNRES)))
+
+# Contagens de Apgar5
+base$TRAPG5_B <- as.vector(table(factor(dados_sinasc_2$CODMUNRES[as.numeric(as.character(dados_sinasc_2$APGAR5)) < 7], levels = base$CODMUNRES)))
+base$TRAPG5_N <- as.vector(table(factor(dados_sinasc_2$CODMUNRES[as.numeric(as.character(dados_sinasc_2$APGAR5)) >= 7], levels = base$CODMUNRES)))
+
+# Média e Desvio Padrão de Apgar5
+stats_apg <- aggregate(as.numeric(as.character(APGAR5)) ~ CODMUNRES, data = dados_sinasc_2, function(x) {
+  c(MD = mean(x, na.rm = TRUE), DP = sd(x, na.rm = TRUE))
+})
+stats_apg <- do.call(data.frame, stats_apg)
+names(stats_apg) <- c("CODMUNRES", "APG5_MD", "APG5_DP")
+base <- merge(base, stats_apg, by = "CODMUNRES", all.x = TRUE)
+
+# Com anomalia (TRAC)
+base$TRAC <- as.vector(table(factor(dados_sinasc_2$CODMUNRES[dados_sinasc_2$IDANOMAL == 1], levels = base$CODMUNRES)))
+
+# Sem anomalia (TRSAC)
+base$TRSAC <- as.vector(table(factor(dados_sinasc_2$CODMUNRES[dados_sinasc_2$IDANOMAL == 2], levels = base$CODMUNRES)))
+
+# Lista completa de colunas que NÃO podem ser zeradas (estatísticas)
+cols_protegidas = c("CODMUNRES", "IM_MD", "IM_DP", "IM_P25", "IM_P50", "IM_P75", 
+                    "DG_P25", "DG_P50", "DG_P75", "DG_MD", "DG_DP", 
+                    "PESO_P25", "PESO_P50", "PESO_P75", "PESO_MD", "PESO_DP",
+                    "APG5_MD", "APG5_DP")
+
+cols_contagem = setdiff(names(base), cols_protegidas)
+base[cols_contagem][is.na(base[cols_contagem])] = 0
+
 
 # Inserindo agora linha da UF
 linha_estado = base[1, ]

@@ -790,6 +790,33 @@ write.csv(SIM_MUN, "SIM_PE_.csv", row.names = FALSE)
 # 3. população residente censo 2010 - por faixa etária -  UF - SIDRA - tabela_1552.csv
 # 4. população residente censo 2010 - por faixa etária e sexo -  municípios - SIDRA - tabela_1552.csv
 
+# --- Leitura das Bases --------
+
+# 1. População residente estimada
+pop_estimada_2015 <- read.csv("população residente estimada - UF e municípios - 2015 - SIDRA - tabela_6579.csv", sep=";", header=TRUE)
+
+# 2. População residente censo 2010 - Total e sexo
+pop_censo_total_sexo <- read.csv("população residente censo 2010 - UF e municípios - total e por sexo - SIDRA - tabela_1552.csv", sep=";", header=TRUE)
+
+# 3. População residente censo 2010 - Faixa etária UF
+pop_censo_faixa_uf <- read.csv("população residente censo 2010 - por faixa etária -  UF - SIDRA - tabela_1552.csv", sep=";", header=TRUE)
+
+# 4. População residente censo 2010 - Faixa etária e sexo municípios
+pop_censo_faixa_sexo_mun <- read.csv("população residente censo 2010 - por faixa etária e sexo -  municípios - SIDRA - tabela_1552.csv", sep=";", header=TRUE)
+
+#Verificando a estrutura
+dim(pop_estimada_2015)
+str(pop_estimada_2015)
+
+dim(pop_censo_total_sexo)
+str(pop_censo_total_sexo)
+
+dim(pop_censo_faixa_uf)
+str(pop_censo_faixa_uf)
+
+dim(pop_censo_faixa_sexo_mun)
+str(pop_censo_faixa_sexo_mun)
+
 # A partir dos arquivos acima gere o banco de dados de nome SIDRA_UF com as seguintes variáveis:
 # 1  ANO    
 # 2  NIVEL
@@ -805,9 +832,66 @@ write.csv(SIM_MUN, "SIM_PE_.csv", row.names = FALSE)
 # 12 POPRC_F_15_49
 # 13 POPRC_F_50
 
+library(tidyverse)
+
+# 1. Base com a Estimativa 2015
+SIDRA_PE <- pop_estimada_2015 %>%
+  filter(grepl("^26", CODMUNRES) | CODMUNRES == 26) %>%
+  select(CODMUNRES, POPRE_T)
+
+# 2. União com Censo 2010 (Total e Sexo)
+SIDRA_PE <- SIDRA_PE %>%
+  left_join(
+    pop_censo_total_sexo %>%
+      filter(grepl("^26", CODMUNRES) | CODMUNRES == 26) %>%
+      select(CODMUNRES, POPRC_T, POPRC_M, POPRC_F), 
+    by = "CODMUNRES"
+  )
+
+# 3. Criando base de Idades para a UF (Código 26)
+idades_uf <- pop_censo_faixa_uf %>%
+  filter(CODMUNRES == 26) %>%
+  group_by(CODMUNRES) %>%
+  summarise(
+    POPRC_15 = sum(POP[F_IDADE %in% c("0 a 4 anos", "5 a 9 anos", "10 a 14 anos")]),
+    POPRC_15_49 = sum(POP[F_IDADE %in% c("15 a 19 anos", "20 a 24 anos", "25 a 29 anos", "30 a 34 anos", "35 a 39 anos", "40 a 44 anos", "45 a 49 anos")]),
+    POPRC_50 = sum(POP[!F_IDADE %in% c("0 a 4 anos", "5 a 9 anos", "10 a 14 anos", "15 a 19 anos", "20 a 24 anos", "25 a 29 anos", "30 a 34 anos", "35 a 39 anos", "40 a 44 anos", "45 a 49 anos")]),
+    POPRC_F_15 = sum(POPF[F_IDADE %in% c("0 a 4 anos", "5 a 9 anos", "10 a 14 anos")]),
+    POPRC_F_15_49 = sum(POPF[F_IDADE %in% c("15 a 19 anos", "20 a 24 anos", "25 a 29 anos", "30 a 34 anos", "35 a 39 anos", "40 a 44 anos", "45 a 49 anos")]),
+    POPRC_F_50 = sum(POPF[!F_IDADE %in% c("0 a 4 anos", "5 a 9 anos", "10 a 14 anos", "15 a 19 anos", "20 a 24 anos", "25 a 29 anos", "30 a 34 anos", "35 a 39 anos", "40 a 44 anos", "45 a 49 anos")])
+  )
+
+# 4. Criando base de Idades para os MUNICIPIOS
+idades_mun <- pop_censo_faixa_sexo_mun %>%
+  filter(grepl("^26", CODMUNRES)) %>%
+  group_by(CODMUNRES) %>%
+  summarise(
+    POPRC_15 = sum(POP[F_IDADE %in% c("0 a 4 anos", "5 a 9 anos", "10 a 14 anos")]),
+    POPRC_15_49 = sum(POP[F_IDADE %in% c("15 a 19 anos", "20 a 24 anos", "25 a 29 anos", "30 a 34 anos", "35 a 39 anos", "40 a 44 anos", "45 a 49 anos")]),
+    POPRC_50 = sum(POP[!F_IDADE %in% c("0 a 4 anos", "5 a 9 anos", "10 a 14 anos", "15 a 19 anos", "20 a 24 anos", "25 a 29 anos", "30 a 34 anos", "35 a 39 anos", "40 a 44 anos", "45 a 49 anos")]),
+    POPRC_F_15 = sum(POPF[F_IDADE %in% c("0 a 4 anos", "5 a 9 anos", "10 a 14 anos")]),
+    POPRC_F_15_49 = sum(POPF[F_IDADE %in% c("15 a 19 anos", "20 a 24 anos", "25 a 29 anos", "30 a 34 anos", "35 a 39 anos", "40 a 44 anos", "45 a 49 anos")]),
+    POPRC_F_50 = sum(POPF[!F_IDADE %in% c("0 a 4 anos", "5 a 9 anos", "10 a 14 anos", "15 a 19 anos", "20 a 24 anos", "25 a 29 anos", "30 a 34 anos", "35 a 39 anos", "40 a 44 anos", "45 a 49 anos")])
+  )
+
+# 5. Unindo tudo e finalizando
+SIDRA_PE <- SIDRA_PE %>%
+  left_join(bind_rows(idades_uf, idades_mun), by = "CODMUNRES") %>%
+  mutate(
+    ANO = 2015,
+    NIVEL = ifelse(nchar(as.character(CODMUNRES)) == 2, "UF", "MUNICIPIO")
+  ) %>%
+  select(ANO, NIVEL, CODMUNRES, POPRE_T, POPRC_T, POPRC_M, POPRC_F, 
+         POPRC_15, POPRC_15_49, POPRC_50, POPRC_F_15, POPRC_F_15_49, POPRC_F_50)
+
+# Verificar se a primeira linha (UF) e as outras (MUNICIPIO) estão completas
+head(SIDRA_PE)
 
 
 # Exporte o arquivo em formato CSV
+
+write.csv(SIDRA_PE, "SIDRA_PE.csv", row.names = FALSE)
+
 # Faça o commit com a mensagem "Script e dados TAREFA 3 - SIDRA"
 
 #3 - Faça um commit em main com a mensagem "Script com orientações ETAPA 3 - SIDRA"

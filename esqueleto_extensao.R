@@ -894,7 +894,63 @@ write.csv(SIDRA_PE, "SIDRA_PE.csv", row.names = FALSE)
 
 # Faça o commit com a mensagem "Script e dados TAREFA 3 - SIDRA"
 
-#3 - Faça um commit em main com a mensagem "Script com orientações ETAPA 3 - SIDRA"
+# Tarefa 2: Acesso aos bancos de dados do SINISA e obtenção da informação
+# Escreva os comandos da Tarefa 2 estando na branch OUTROS# Leia o arquivo agua e esgoto - município - 2015.csv 
+# A partir do arquivo acima gere o banco de dados de nome SINISA_UF com as seguintes variáveis:
+# 1  ANO    
+# 2  NIVEL
+# 3  CODMUNRES
+# 4 POPR_RA
+# 5 POPR_RE
+
+library(tidyverse)
+
+# Lendo o arquivo indicando que o ponto (.) é separador de milhar
+sinisa_original <- read_delim(
+  "agua e esgoto - município - 2015.csv", 
+  delim = ";", 
+  locale = locale(decimal_mark = ",", grouping_mark = ".") 
+)
+
+
+SINISA_PE <- sinisa_original %>%
+  filter(Estado == "PE") %>%
+  select(
+    ANO = `Ano de Referência`,
+    CODMUNRES = CODMUNRES,
+    POPR_RA = POPR_RA,
+    POPR_RE = POPR_RE
+  ) %>%
+  mutate(
+    NIVEL = "Município",
+    POPR_RA = as.numeric(gsub("[^0-9]", "", POPR_RA)),
+    POPR_RE = as.numeric(gsub("[^0-9]", "", POPR_RE)),
+    CODMUNRES = as.character(CODMUNRES)
+  ) %>%
+  select(ANO, NIVEL, CODMUNRES, POPR_RA, POPR_RE)
+
+# Exporte o arquivo em formato CSV
+write_csv(SINISA_PE, "SINISA_PE.csv")
+
+# Faça o commit com a mensagem "Script e dados TAREFA 3 - SINISA"
+
+# Tarefa 3: Acesso aos bancos de dados do ATLAS  e obtenção da informação
+# Escreva os comandos da Tarefa 3 estando na branch OUTROS
+# Leia os arquivos:
+# 1. códigos dos municípios - 2010.csv      
+# 2. IDHM - 2010 (CENSO) e 2015 (PNAD) - total e por sexo - UF - Atlas Brasil.csv
+# 3. IDHM - 2010 - municípios - Atlas Brasil.csv
+# A partir do arquivo acima gere o banco de dados de nome ATLAS_UF com as seguintes variáveis:
+# 1  ANO    
+# 2  NIVEL
+# 3  CODMUNRES
+# 4 IDHM_A
+# 5 IDHM_CA
+# 6 IDHM_CA_M
+# 7 IDHM_CA_F
+
+# Exporte o arquivo em formato CSV
+# Faça o commit com a mensagem "Script e dados TAREFA 3 - ATLAS"
 
 
 

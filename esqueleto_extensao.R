@@ -884,7 +884,7 @@ SIDRA_PE <- SIDRA_PE %>%
   select(ANO, NIVEL, CODMUNRES, POPRE_T, POPRC_T, POPRC_M, POPRC_F, 
          POPRC_15, POPRC_15_49, POPRC_50, POPRC_F_15, POPRC_F_15_49, POPRC_F_50)
 
-# Verificar se a primeira linha (UF) e as outras (MUNICIPIO) estão completas
+# Verificando se a primeira linha (UF) e as outras (MUNICIPIO) estão completas
 head(SIDRA_PE)
 
 
@@ -949,10 +949,73 @@ write_csv(SINISA_PE, "SINISA_PE.csv")
 # 6 IDHM_CA_M
 # 7 IDHM_CA_F
 
+
+library(tidyverse)
+
+# 1. Lendo os arquivos
+codigos_municipios <- read_csv2("códigos dos municípios - 2010.csv")
+idhm_municipios    <- read_csv2("IDHM - 2010 - municípios - Atlas Brasil.csv")
+idhm_uf            <- read_csv2("IDHM - 2010 (CENSO) e 2015 (PNAD) - total e por sexo - UF - Atlas Brasil.csv")
+
+# FILTRANDO APENAS PERNAMBUCO EM CADA BANCO ANTES DE JUNTAR
+
+# No banco do Atlas, pegamos apenas linhas que terminam com "(PE)"
+idhm_municipios_pe <- idhm_municipios %>% 
+  filter(str_ends(município, "\\(PE\\)")) %>%
+  mutate(
+    municipio_limpo = substr(município, 1, nchar(município) - 5),
+    municipio_limpo = str_trim(municipio_limpo)
+  )
+
+# No banco de códigos, pegamos apenas os códigos que começam com "26" (Pernambuco)
+codigos_municipios_pe <- codigos_municipios %>%
+  filter(str_starts(as.character(CODMUNRES), "26")) %>%
+  mutate(
+    municipio_limpo = str_trim(município),
+    CODMUNRES = as.character(CODMUNRES)
+  )
+
+# CRUZANDO OS DADOS 
+atlas_municipios_com_codigo <- left_join(
+  idhm_municipios_pe, 
+  codigos_municipios_pe, 
+  by = "municipio_limpo"
+)
+
+# CRIANDO A TABELA DOS MUNICÍPIOS DE PE SELECIONANDO AS VARIÁVEIS
+dados_municipios <- atlas_municipios_com_codigo %>%
+  mutate(
+    ANO = 2010,
+    NIVEL = "Município",
+    CODMUNRES = as.character(CODMUNRES),
+    IDHM_A = as.numeric(gsub(",", ".", IDHM_2010)),
+    IDHM_CA = NA_real_,
+    IDHM_CA_M = NA_real_,
+    IDHM_CA_F = NA_real_
+  ) %>%
+  select(ANO, NIVEL, CODMUNRES, IDHM_A, IDHM_CA, IDHM_CA_M, IDHM_CA_F)
+
+# CRIANDO A TABELA DA UF
+dados_uf <- idhm_uf %>%
+  filter(UF == "Pernambuco") %>%
+  reframe(
+    ANO = c(2010, 2015),
+    NIVEL = "UF",
+    CODMUNRES = "26",
+    IDHM_A = as.numeric(gsub(",", ".", c(IDHM_2010, IDHM_2015))),
+    IDHM_CA = NA_real_, 
+    IDHM_CA_M = as.numeric(gsub(",", ".", c(IDHM_2010_M, IDHM_2015_M))),
+    IDHM_CA_F = as.numeric(gsub(",", ".", c(IDHM_2010_F, IDHM_2015_F)))
+  )
+
+# JUNTANDO AS DUAS TABELAS
+ATLAS_PE <- bind_rows(dados_municipios, dados_uf)
+
 # Exporte o arquivo em formato CSV
+
+write_csv(ATLAS_PE, "ATLAS_PE.csv")
+
 # Faça o commit com a mensagem "Script e dados TAREFA 3 - ATLAS"
-
-
 
 #####################################################################################################
 # ETAPA 4: GERAR BANCO DE DADOS FINAL DO ESTADO, BASEADO NAS ANÁLISES DE SINASC, SIM, IBGE, SNIS,...

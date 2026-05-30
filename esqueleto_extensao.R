@@ -1455,6 +1455,10 @@ BDEM_PE_2015 <- DA_PE %>%
 
 # Após a criação do banco, fazer commit “Script e dados BDEM_UF_2015”
 # Exporte o arquivo em formato CSV
+# Exporte o arquivo final em formato CSV
+
+write_csv(BDEM_PE_2015, "BDEM_PE_2015.csv")
+
 # Faça o commit com a mensagem "Script e dados BDEM"
 
 

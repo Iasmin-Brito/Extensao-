@@ -1411,22 +1411,16 @@ SIM_PE    <- read_csv("SIM_PE.csv")
 SINISA_PE <- read_csv("SINISA_PE.csv")
 
 # Garantindo que a coluna CODMUNRES seja caractere em todos para evitar erros
-SIDRA_PE  <- SIDRA_PE %>% mutate(CODMUNRES = as.character(CODMUNRES))
-ATLAS_PE  <- ATLAS_PE %>% mutate(CODMUNRES = as.character(CODMUNRES))
-SINASC_PE <- SINASC_PE %>% mutate(CODMUNRES = as.character(CODMUNRES))
-SIM_PE    <- SIM_PE %>% mutate(CODMUNRES = as.character(CODMUNRES))
-SINISA_PE <- SINISA_PE %>% mutate(CODMUNRES = as.character(CODMUNRES))
+SIDRA_PE  <- SIDRA_PE  %>% mutate(CODMUNRES = substr(as.character(CODMUNRES), 1, 6))
+ATLAS_PE  <- ATLAS_PE  %>% mutate(CODMUNRES = substr(as.character(CODMUNRES), 1, 6))
+SINASC_PE <- SINASC_PE %>% mutate(CODMUNRES = substr(as.character(CODMUNRES), 1, 6))
+SIM_PE    <- SIM_PE    %>% mutate(CODMUNRES = substr(as.character(CODMUNRES), 1, 6))
+SINISA_PE <- SINISA_PE %>% mutate(CODMUNRES = substr(as.character(CODMUNRES), 1, 6))
 
-# 1. Juntando os dois primeiros bancos
+# Fazendo o merge 
 DA_PE <- merge(SIDRA_PE, ATLAS_PE, by = c("ANO", "NIVEL", "CODMUNRES"), all = TRUE)
-
-# 2. Juntando o resultado com o terceiro banco
 DA_PE <- merge(DA_PE, SINASC_PE, by = c("ANO", "NIVEL", "CODMUNRES"), all = TRUE)
-
-# 3. Juntando com o quarto banco
 DA_PE <- merge(DA_PE, SIM_PE, by = c("ANO", "NIVEL", "CODMUNRES"), all = TRUE)
-
-# 4. Juntando com o quinto banco e finaliza o grande merge de PE
 DA_PE <- merge(DA_PE, SINISA_PE, by = c("ANO", "NIVEL", "CODMUNRES"), all = TRUE)
 
 # Após o merge dos bancos, fazer commit “Script e dados agregados da UF”
